@@ -19,7 +19,7 @@ services:
       - db
     networks:
       - default
-      - core_network
+      - alphax_network
 
   # PHP-FPM Service
   php:
@@ -66,6 +66,6 @@ volumes:
 networks:
   default:
     driver: bridge
-  core_network:
+  alphax_network:
     external: true
     name: alphax_network
