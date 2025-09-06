@@ -5,30 +5,33 @@ services:
     container_name: matyar
     restart: unless-stopped
     volumes:
-      - ./:/var/www/html
+      # We only need to mount the files Nginx serves, not the whole app.
+      # This still works, but for production you'd ideally use a volume 
+      # just for the public directory.
+      - ./:/var/www/html 
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - "9001:80" # For local testing, not strictly needed for proxy
+      - "9001:80"
     environment:
-      # IMPORTANT: These variables are read by docker-gen
-      - VIRTUAL_HOST=matyar.alphaxsoft.com # Change to your desired subdomain
+      - VIRTUAL_HOST=matyar.alphaxsoft.com
       - VIRTUAL_PORT=80
     depends_on:
       - php
       - db
     networks:
       - default
-      - core_network # Connect to the reverse proxy network
+      - core_network
 
   # PHP-FPM Service
   php:
     build:
       context: .
       dockerfile: Dockerfile
+    # ✅ FIXED: Give the built image a name
+    image: matyar-app:latest 
     container_name: matyar_php
     restart: unless-stopped
-    volumes:
-      - ./:/var/www/html
+    # ❌ REMOVED: The volume mount is gone. The code is in the image.
     networks:
       - default
 
@@ -41,7 +44,7 @@ services:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD} # Use a secure root password
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     volumes:
       - db-data:/var/lib/mysql
     networks:
@@ -49,12 +52,13 @@ services:
 
   # Queue Worker (Optional)
   worker:
-    image: matyar-php # Reuse the PHP image we built
-    container_name: matayr_worker
+    # ✅ FIXED: Use the same image that the 'php' service built
+    image: matyar-app:latest 
+    # ✅ FIXED: Corrected typo in container name
+    container_name: matyar_worker 
     restart: unless-stopped
     command: php artisan queue:work --sleep=3 --tries=3
-    volumes:
-      - ./:/var/www/html
+    # ❌ REMOVED: The volume mount is gone here too.
     depends_on:
       - php
       - db
@@ -70,4 +74,4 @@ networks:
     driver: bridge
   core_network:
     external: true
-    name: infra_network # IMPORTANT: Use the actual name of your core network
+    name: alphax_network
