@@ -5,16 +5,15 @@ services:
     container_name: matyar
     restart: unless-stopped
     volumes:
-      # We only need to mount the files Nginx serves, not the whole app.
-      # This still works, but for production you'd ideally use a volume 
-      # just for the public directory.
-      - ./:/var/www/html 
+      - ./:/var/www/html
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - "9001:80"
-    environment:
-      - VIRTUAL_HOST=matyar.alphaxsoft.com
-      - VIRTUAL_PORT=80
+    # ❌ REMOVED environment variables for docker-gen
+    # ✅ ADDED labels that match your nginx.tmpl
+    labels:
+      - "nginx.host=matyar.alphaxsoft.com"
+      - "nginx.port=80"
     depends_on:
       - php
       - db
@@ -27,11 +26,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # ✅ FIXED: Give the built image a name
-    image: matyar-app:latest 
+    image: matyar-app:latest
     container_name: matyar_php
     restart: unless-stopped
-    # ❌ REMOVED: The volume mount is gone. The code is in the image.
     networks:
       - default
 
@@ -52,13 +49,10 @@ services:
 
   # Queue Worker (Optional)
   worker:
-    # ✅ FIXED: Use the same image that the 'php' service built
-    image: matyar-app:latest 
-    # ✅ FIXED: Corrected typo in container name
-    container_name: matyar_worker 
+    image: matyar-app:latest
+    container_name: matyar_worker
     restart: unless-stopped
     command: php artisan queue:work --sleep=3 --tries=3
-    # ❌ REMOVED: The volume mount is gone here too.
     depends_on:
       - php
       - db

@@ -27,7 +27,7 @@ Route::post('/source/upload', [SourceFileController::class, 'store'])->middlewar
 //TODO: add a middleware so that each user just can view his own files not the others, also the fileid should not be shown in the url directly
 Route::get('/translate/sfile/{fileId}', [SourceFileController::class, 'show'])->middleware(['auth', 'verified'])->name('source.show'); 
 
-Route::post('/tunit/store', [TargetUnitController::class, 'store'])->middleware(['auth', 'verified'])->name('source.show');  
+Route::post('/tunit/store', [TargetUnitController::class, 'store'])->middleware(['auth', 'verified'])->name('source.store');  
 
 Route::post('/convert-to-doc', [DocumentController::class, 'convertToDoc']);
 
