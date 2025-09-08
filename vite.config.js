@@ -10,11 +10,11 @@ export default defineConfig({
     ],
     base: '/', 
     server: {  
-        host: 'mtyar.test', // Ensure this is set correctly  
+        host: 'matyar.test', // Ensure this is set correctly  
         port: 3000, // Default port  
         strictPort: true, // Optional: stops if the port is in use
         cors: {
-            origin: "https://mtyar.test"
+            origin: "https://matyar.test"
         }
     },
 });

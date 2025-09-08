@@ -24,7 +24,6 @@ class SourceFileController extends Controller
             'project_name' => 'required',
             'lang' => 'required|in:ar,fa',
             'subject' => 'required',
-            'corpus' => 'required', 
             'file' => 'required|file|mimes:doc,docx,txt|max:10240', // Adjust validation rules as needed  
             ]);  
         } catch(\Illuminate\Validation\ValidationException $e) {
