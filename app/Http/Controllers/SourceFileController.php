@@ -39,6 +39,36 @@ class SourceFileController extends Controller
         }        
 
 
+        $lang = $request->input('lang');
+        if ($lang == "ar") {
+            $tableName = "arabic_source_units";
+            $targetlang = "fa";
+        } elseif ($lang == "fa") {
+            $tableName = "farsi_source_units";
+            $targetlang = "ar";
+        }
+        
+       // Save the project if new
+        $existingProject = Project::where('name', $request->input('project_name'))
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if (!$existingProject) {
+            $project = Project::create([
+                'name'            => $request->input('project_name'),
+                'subject'         => $request->input('subject'),
+                'description'     => '',
+                'source_language' => $lang,
+                'target_language' => $targetlang,
+                'status'          => 'pending',
+                'user_id'         => auth()->id(),
+            ]);
+        } else {
+            $project = $existingProject;
+        }
+
+        $projectID = $project->id;
+
         //get the uploaded file and convert it into html
         $file = $request->file('file');
         $path = $file->store('uploads', 'public');
@@ -83,9 +113,9 @@ class SourceFileController extends Controller
         $fileType = $file->getClientOriginalExtension(); // Get the file type  
         $userId = auth()->id(); // Get the authenticated user's ID
         // $fileName = $fileName = $request->file('file')->getClientOriginalName();
-        $lang = $request->input('lang');
 
         $sourceFile = SourceFile::create([
+            'project_id' => $projectID,
             'name' => $request->input('file_name'),
             'owner' => $userId,
             'type' => $fileType,
@@ -99,13 +129,7 @@ class SourceFileController extends Controller
          
         //Store the segements
         //preparing the appropriate Model for storing the units
-        if ($lang == "ar") {
-            $tableName = "arabic_source_units";
-            $targetlang = "fa";
-        } elseif ($lang == "fa") {
-            $tableName = "farsi_source_units";
-            $targetlang = "ar";
-        }
+
         $sourceUnit = new SourceUnit();
         $sourceUnit->setTableName($tableName);
 
@@ -119,22 +143,7 @@ class SourceFileController extends Controller
             ]);
         }
 
-                //save the project if new
-        $existingProject = Project::where('name', $request->input('project_name'))
-            ->where('user_id', auth()->id())
-            ->first();
-
-        if (!$existingProject) {
-            Project::create([
-                'name' => $request->input('project_name'),
-                'subject' => $request->input('subject'),
-                'description' => '',
-                'source_language' => $lang,
-                'target_language' => $targetlang,
-                'status' => 'pending',
-                'user_id' => auth()->id(),
-            ]);
-        }
+       
 
         return response()->json([
             'fileId' => $fileId,

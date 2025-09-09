@@ -10,7 +10,7 @@ class SourceFile extends Model
     protected $fillable = [
         'name',  
         'owner',
-        // 'project_id', 
+        'project_id', 
         'type',
         'lang',
         'template', 

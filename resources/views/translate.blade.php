@@ -1,5 +1,6 @@
 <x-app-layout>
     <style>
+        
         body {
             height: 100vh;
             overflow: hidden;
@@ -79,52 +80,43 @@
             position: relative;
         }
 
-        .tool-bar .menu {
-            position: relative;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            margin-right: auto;
-        }
 
-        .tool-bar .menu:hover {
-            background-color: #e9ecef;
-        }
-
-        .tool-bar .dropdown {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: white;
-            border: 1px solid #ddd;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-
-        .tool-bar .dropdown.show {
-            display: block;
-        }
-
-        .tool-bar .dropdown-item {
-            padding: 0.5rem 1rem;
-            white-space: nowrap;
-        }
-        
-        .tool-bar .dropdown-item:hover {
-            background-color: #f8f9fa;
-        }
     </style>
     
-    <div class="tool-bar h-20 bg-white m-3">
-        <div class="menu" onclick="toggleDropdown('file-dropdown')">
-            {{__('File')}}
-            <div id="file-dropdown" class="dropdown">
-                <div class="dropdown-item" onclick="convertHtmlToWord()">{{__('Download')}}</div>
-            </div>
+    <div class="tool-bar flex items-center h-20 bg-white shadow-md rounded-md p-4 m-3 space-x-4">
+
+        <!-- First Column: Radio Options -->
+        <div class="w-1/4 flex flex-col justify-center space-y-2  border-l border-gray-300">
+            <label class="flex items-center space-x-2">
+                <input type="radio" name="translationOption" value="machine" class="form-radio text-blue-500">
+                <span class="text-gray-700">&nbsp;&nbsp;{{ __('Using Machine Translation') }}</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="radio" name="translationOption" value="memory" class="form-radio text-blue-500">
+                <span class="text-gray-700">&nbsp;&nbsp;{{ __('Using Translation Memory') }}</span>
+            </label>
         </div>
+
+        <!-- Second Column: Inputs and Button -->
+        <div class="w-1/2 flex items-center space-x-2 border-l border-gray-300 pr-2">
+            <input type="text" placeholder="{{ __('Enter text...') }}" class="border border-gray-300 rounded-md p-2 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <input type="text" placeholder="{{ __('Optional note...') }}" class="border border-gray-300 rounded-md p-2 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">
+                {{ __('Submit') }}
+            </button>
+        </div>
+
+        <!-- Third Column: Download Button -->
+        <div class="w-1/4 flex justify-end">
+            <button onclick="convertHtmlToWord()" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors">
+                {{ __('Download') }}
+            </button>
+        </div>
+
     </div>
 
-    <div id="content" class="m-3 text-gray-900 dark:text-gray-100 justify-around" style="height:calc(100vh - 9rem); overflow-y:scroll; overflow-x:hidden;">
+
+    <div id="content" class="m-3 text-gray-900 dark:text-gray-100 justify-around" style="height:calc(100vh - 9rem); overflow-y:scroll; overflow-x:hidden; line-height: 2;">
         {!!$finalHtml!!}
     </div>
     
@@ -236,11 +228,6 @@
             .catch(error => {
                 console.error('Error:', error);
             });
-        }
-
-        function toggleDropdown(id) {
-            const dropdown = document.getElementById(id);
-            dropdown.classList.toggle('show');
         }
 
         function convertHtmlToWord() {

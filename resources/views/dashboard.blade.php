@@ -48,7 +48,7 @@
                                     <div class="grid gap-6 mb-6 md:grid-cols-4">
                                         <div>
                                             <label for="project_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{__('Project Name')}}</label>
-                                            <input type="text" id="project_name" name="project_name" list="project-list" 
+                                            <input type="text" autocomplete="off" id="project_name" name="project_name" list="project-list"
                                                    x-model="projectName" 
                                                    @blur="checkProjectName()" 
                                                    @input.debounce.2000ms="handleProjectInput"
@@ -62,11 +62,11 @@
                                         </div>
                                         <div>
                                             <label for="subject_select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{__('Subject')}}</label>
-                                            <input type="text" id="subject_select" name="subject" x-model="subject" :readonly="subjectReadonly" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{__('Enter the project\'s subject here.')}}" />
+                                            <input type="text" autocomplete="off" id="subject_select" name="subject" x-model="subject" :readonly="subjectReadonly" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{__('Enter the project\'s subject here.')}}" />
                                         </div>
                                         <div>
                                             <label for="file_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{__('File Name')}}</label>
-                                            <input type="text" id="file-name" name="file-name" 
+                                            <input type="text" autocomplete="off" id="file-name" name="file-name" 
                                                    x-model="fileName" 
                                                    list="file-list" 
                                                    @input="checkFileSelection()" 
@@ -104,27 +104,52 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex items-center justify-center w-full" 
-                                 :class="{ 'expand-animation': fileZoneDisplay === 'flex' }" 
-                                 :style="{ display: fileZoneDisplay }">  
-                                <label for="dropzone-file" class="flex flex-col items-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600" @dragover.prevent="handleDragOver" @drop="handleDrop">
+                            <div class="flex items-center justify-center w-full">  
+                                <label 
+                                    for="dropzone-file" 
+                                    class="flex flex-col items-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 
+                                        dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600" 
+                                    @dragover.prevent="handleDragOver" 
+                                    @drop="handleDrop"
+                                    :class="selectedFileId ? 'opacity-50 cursor-not-allowed blur-sm pointer-events-none' : ''"
+                                >
                                     <div class="flex flex-col items-center justify-center pt-5 pb-9">  
                                         <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">  
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>  
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 
+                                                5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 
+                                                5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>  
                                         </svg>  
-                                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">{{__("Click to upload")}}</span> {{__("or drag and drop")}}</p>  
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">{{__("WORD or TEXT (MAX. 10MB)")}}</p>  
+                                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                            <span class="font-semibold">{{ __("Click to upload") }}</span> {{ __("or drag and drop") }}
+                                        </p>  
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ __("WORD or TEXT (MAX. 10MB)") }}</p>  
                                     </div>  
-                                    <input id="dropzone-file" type="file" class="hidden" @change="handleFileChange" accept=".doc,.docx,.txt" required />  
+                                    <input 
+                                        id="dropzone-file" 
+                                        type="file" 
+                                        class="hidden" 
+                                        @change="handleFileChange" 
+                                        accept=".doc,.docx,.txt" 
+                                        required 
+                                        :disabled="selectedFileId !== null"
+                                    />  
                                 </label>  
                             </div>  
                             <div class="flex flex-wrap justify-around">
-                                <button @click="uploadFile()" 
-                                        class="flex items-center px-4 py-2 mt-3 bg-blue-500 text-white rounded" 
-                                        :class="{ 'fade-out-animation': fileZoneDisplay === 'flex' }" 
-                                        :style="{ display: fileZoneDisplay }">
-                                    <span class="px-4">{{__('Start Uploading')}}</span>
-                                    <div x-cloak x-show="isLoading" class="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spinner-border_0.75s_linear_infinite]" role="status"></div>
+                                <button 
+                                    @click="uploadFile()" 
+                                    class="flex items-center px-4 py-2 mt-3 bg-blue-500 text-white rounded" 
+                                    :disabled="selectedFileId !== null"
+                                    :class="selectedFileId ? 'opacity-50 cursor-not-allowed blur-sm' : ''"
+                                >
+                                    <span class="px-4">{{ __('Start Uploading') }}</span>
+                                    <div 
+                                        x-cloak 
+                                        x-show="isLoading" 
+                                        class="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em]" 
+                                        role="status">
+                                    </div>
                                 </button>
                                 <button x-cloak x-show="messageColor=='green'" @click="prepareTranslation" class="flex items-center px-4 py-2 mt-3 bg-green-500 text-white rounded">
                                     <span class="px-4">{{__('Start Translating')}}</span>
@@ -159,7 +184,6 @@
             projectNames: @json($projects->map(function($project) {
                 return ['id' => $project->id, 'name' => $project->name];
             })),
-            fileZoneDisplay: 'none',
             projectName: '',
             subject: '',
             subjectReadonly: false,
@@ -199,7 +223,6 @@
             checkProjectName() {
                 if (!this.projectName) {
                     this.isNewProject = false;
-                    this.fileZoneDisplay = 'none';
                     return;
                 }
                 
@@ -215,7 +238,6 @@
                 } else {
                     // New project - show file upload zone
                     this.isNewProject = true;
-                    this.fileZoneDisplay = 'flex';
                     this.subject = '';
                     this.subjectReadonly = false;
                     this.projectFiles = [];
@@ -246,13 +268,11 @@
                                 this.projectFiles = data.project.files;
                             }
                             this.isNewProject = false;
-                            this.fileZoneDisplay = 'none';
                         } else {
                             this.subject = '';
                             this.subjectReadonly = false;
                             this.projectFiles = [];
                             this.isNewProject = true;
-                            this.fileZoneDisplay = 'flex';
                         }
                     })
                     .catch(error => {
@@ -261,7 +281,6 @@
                         this.subjectReadonly = false;
                         this.projectFiles = [];
                         this.isNewProject = true;
-                        this.fileZoneDisplay = 'flex';
                     })
                     .finally(() => this.isLoading = false);
             },
@@ -270,7 +289,6 @@
                     this.selectedFileId = null;
                     this.selectedFileLang = null;
                     this.showResumeButton = false;
-                    this.fileZoneDisplay = this.isNewProject ? 'flex' : 'none';
                     return;
                 }
                 const matchedFile = this.projectFiles.find(file => 
@@ -280,25 +298,19 @@
                     this.selectedFileId = matchedFile.id;
                     this.selectedFileLang = matchedFile.lang;
                     this.showResumeButton = true;
-                    this.fileZoneDisplay = 'none';
                 } else {
                     this.selectedFileId = null;
                     this.selectedFileLang = null;
                     this.showResumeButton = false;
-                    this.fileZoneDisplay = this.isNewProject ? 'flex' : 'none';
                 }
             },
             checkNewFileName() {
                 if (!this.fileName || this.projectFiles.length === 0) {
-                    this.fileZoneDisplay = this.isNewProject ? 'flex' : 'none';
                     return;
                 }
                 const matchedFile = this.projectFiles.find(file => 
                     file.name.toLowerCase() === this.fileName.toLowerCase()
                 );
-                if (!matchedFile) {
-                    this.fileZoneDisplay = this.isNewProject ? 'flex' : 'none';
-                }
             },
             async uploadFile() {  
                 if (this.selectedFileId) {
@@ -315,7 +327,6 @@
                 formData.append('project_name', this.projectName);
                 formData.append('lang', document.getElementById('from_to_select').value);
                 formData.append('subject', this.subject);
-                formData.append('corpus', document.getElementById('corpus_select').value);
                 formData.append('file', this.file);
                 formData.append('file_name', this.fileName);
                 try {
