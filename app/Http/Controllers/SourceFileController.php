@@ -157,6 +157,9 @@ class SourceFileController extends Controller
         $lang = $sourceFile->lang;
         $template = $sourceFile->template;
         
+        if ($lang = 'ar') $targetLang = 'fa';
+        if ($lang = 'fa') $targetLang = 'ar';
+
         //remove the html, head and body elements from the templates and storing them in source and target html to be further changed afterwards
         $sourceHtml = $template;
         $targetHtml = $template;
@@ -226,7 +229,7 @@ class SourceFileController extends Controller
             $finalHtml .=  '</div>';
         }
 
-        return view('translate', compact('finalHtml'));
+        return view('translate', compact('finalHtml', 'lang', 'targetLang'));
     }
 
     //extracts the text nodes from an html string
