@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\DB;
 use App\Models\SourceFile;
 use App\Models\Project;
 
-use App\Models\SourceUnit;
+use App\Models\ArabicSourceUnit;
+use App\Models\FarsiSourceUnit;
+
 
 use DOMDocument;
 use DOMText;
@@ -101,13 +103,15 @@ class SourceFileController extends Controller
         //Store the segements
         //preparing the appropriate Model for storing the units
         if ($lang == "ar") {
+            $sourceUnit = new ArabicSourceUnit();
             $tableName = "arabic_source_units";
             $targetlang = "fa";
         } elseif ($lang == "fa") {
+            $sourceUnit = new FarsiSourceUnit();
             $tableName = "farsi_source_units";
             $targetlang = "ar";
         }
-        $sourceUnit = new SourceUnit();
+        
         $sourceUnit->setTableName($tableName);
 
         foreach($finalSegments as $segment) {

@@ -1,0 +1,63 @@
+# Start from the official PHP-FPM image
+FROM php:8.2-fpm-alpine AS base
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Install system dependencies for extensions
+RUN apk add --no-cache \
+    bash \
+    git \
+    curl \
+    unzip \
+    libxml2-dev \
+    oniguruma-dev \
+    icu-dev \
+    openssl \
+    zlib-dev \
+    libzip-dev \
+    autoconf \
+    g++ \
+    make
+
+# Install PHP extensions required by Laravel
+RUN docker-php-ext-install \
+    pdo_mysql \
+    mbstring \
+    fileinfo \
+    dom \
+    xml \
+    intl \
+    zip
+
+# Get the latest version of Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copy composer files first to leverage Docker cache
+COPY composer.json composer.lock ./
+
+# Install dependencies without dev packages and optimize autoloader
+RUN composer install --no-dev --no-scripts --optimize-autoloader
+
+# Now copy the rest of the application code
+COPY . .
+
+# Copy the environment file
+COPY .env .env
+
+# Fix git safe.directory issue
+RUN git config --global --add safe.directory /var/www/html
+
+# Set proper permissions for storage and cache BEFORE running artisan
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
+# Run composer scripts and cache optimizations
+RUN php artisan key:generate --force && \
+    composer dump-autoload --optimize && \
+    php artisan route:cache && \
+    php artisan view:cache
+
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]

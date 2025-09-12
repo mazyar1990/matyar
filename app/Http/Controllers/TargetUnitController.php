@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\SourceFile;
-use App\Models\SourceUnit;
+use App\Models\ArabicSourceUnit;
+use App\Models\FarsiSourceUnit;
 use App\Models\TargetUnit;
 
 
@@ -28,14 +29,16 @@ class TargetUnitController extends Controller
 
         //reconstructing the source html
         if($lang == 'ar') {
+            $sUnit = new ArabicSourceUnit();
             $sourceTable = 'arabic_source_units';
             $targetTable = 'farsi_target_units';
         } elseif ($lang == 'fa') {
+            $sUnit = new FarsiSourceUnit();
             $sourceTable = 'farsi_source_units';
             $targetTable = 'arabic_target_units';
         }
 
-        $sUnit = new SourceUnit();
+        
         $sUnit->setTableName($sourceTable);
 
         $sUnitId = $sUnit->where('source_file', $fileId)  
