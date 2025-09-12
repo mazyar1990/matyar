@@ -8,27 +8,38 @@ use Laravel\Scout\Searchable;
 
 class WikiTitle extends Model
 {
-
     use HasFactory, Searchable;
 
-    // Meilisearch will use this array to build its search documents.
+    /**
+     * The table associated with the model.
+     * It's good practice to explicitly define this.
+     *
+     * @var string
+     */
+    protected $table = 'wiki_titles';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'arabic_text',
+        'persian_text',
+    ];
+
+    /**
+     * Get the indexable data array for the model.
+     * Meilisearch will use this array to build its search documents.
+     *
+     * @return array
+     */
     public function toSearchableArray(): array
     {
         return [
-            'id' => $this->id,
+            'id' => (int) $this->id, // Casting id to integer is recommended for Meilisearch
             'arabic_text' => $this->arabic_text,
             'persian_text' => $this->persian_text,
         ];
-    }
-    //
-    public function up(): void
-    {
-        Schema::create('translations', function (Blueprint $table) {
-            $table->id();
-            $table->longText('arabic_text');
-            $table->longText('persian_text');
-            // timestamps() are optional but good practice
-            $table->timestamps();
-        });
     }
 }

@@ -38,9 +38,6 @@ class TargetUnitController extends Controller
             $targetTable = 'arabic_target_units';
         }
 
-        
-        $sUnit->setTableName($sourceTable);
-
         $sUnitId = $sUnit->where('source_file', $fileId)  
                             ->where('internal_id', $sUnitInternalId)  
                             ->pluck('id')  

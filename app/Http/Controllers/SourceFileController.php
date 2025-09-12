@@ -40,7 +40,7 @@ class SourceFileController extends Controller
             return response()->json(['error' => $translatedErrors], 422);
         }        
 
-
+  
         $lang = $request->input('lang');
         if ($lang == "ar") {
             $tableName = "arabic_source_units";
@@ -49,7 +49,7 @@ class SourceFileController extends Controller
             $tableName = "farsi_source_units";
             $targetlang = "ar";
         }
-        
+
        // Save the project if new
         $existingProject = Project::where('name', $request->input('project_name'))
             ->where('user_id', auth()->id())
@@ -141,8 +141,6 @@ class SourceFileController extends Controller
             $targetlang = "ar";
         }
         
-        $sourceUnit->setTableName($tableName);
-
         foreach($finalSegments as $segment) {
             $sourceUnit->create([
             'source_file' => $fileId,

@@ -9,6 +9,10 @@ services:
     container_name: matyar_php
     networks:
       - app_network
+    ### ADD THIS SECTION ###
+    # This makes the project files available inside the container.
+    volumes:
+      - .:/var/www/html
 
   # Nginx container
   matyar_nginx:
@@ -26,8 +30,13 @@ services:
       - "nginx.port=80"
     expose:
       - "80"
+    ### ADD THIS SECTION ###
+    # This makes Nginx see the exact same files as the PHP container.
+    # THIS IS THE FIX FOR THE CSS (MIME type) ERROR.
+    volumes:
+      - .:/var/www/html
 
-  # Database
+  # Database (no changes needed here)
   db:
     image: mysql:8.0
     container_name: matyar_db
@@ -41,37 +50,32 @@ services:
       - db-data:/var/lib/mysql
     networks:
       - app_network
-    # --- برای سرور با منابع محدود، این بخش را اضافه کنید ---
     deploy:
       resources:
         limits:
           cpus: '0.75'
           memory: 700M
 
-  # ----------------- بخش اضافه شده برای Meilisearch -----------------
+  # Meilisearch (no changes needed here)
   meilisearch:
     image: getmeili/meilisearch:latest
     container_name: matyar_meilisearch
     restart: unless-stopped
     environment:
-      # کلید اصلی را از فایل .env بخوان
-      - MEILI_MASTER_KEY=${MEILISEARCH_KEY}
+      - MEILI_MASTER_KEY=topsecret1400
     volumes:
-      # از این والیوم برای ذخیره دائمی داده‌های Meilisearch استفاده می‌شود
       - meili-data:/data.ms
     networks:
       - app_network
-    # --- برای سرور با منابع محدود، این بخش را اضافه کنید ---
     deploy:
       resources:
         limits:
           cpus: '1.0'
           memory: 800M
-  # ----------------- پایان بخش اضافه شده -----------------
 
 volumes:
   db-data:
-  meili-data: # <-- والیوم جدید برای Meilisearch
+  meili-data:
 
 networks:
   app_network:

@@ -1,10 +1,10 @@
-# Start from the official PHP-FPM image
+# Stage 1: Base PHP image
 FROM php:8.2-fpm-alpine AS base
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies for extensions
+# Install system dependencies for PHP extensions and extra tools
 RUN apk add --no-cache \
     bash \
     git \
@@ -18,7 +18,10 @@ RUN apk add --no-cache \
     libzip-dev \
     autoconf \
     g++ \
-    make
+    make \
+    nodejs \
+    npm \
+    pandoc
 
 # Install PHP extensions required by Laravel
 RUN docker-php-ext-install \
@@ -39,7 +42,7 @@ COPY composer.json composer.lock ./
 # Install dependencies without dev packages and optimize autoloader
 RUN composer install --no-dev --no-scripts --optimize-autoloader
 
-# Now copy the rest of the application code
+# Copy the rest of the application code
 COPY . .
 
 # Copy the environment file

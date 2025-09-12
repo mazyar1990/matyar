@@ -123,29 +123,35 @@ return [
         ],
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Meilisearch Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Here you may configure your Meilisearch settings. Meilisearch is an open
-    | source search engine with minimal configuration. Below, you can state
-    | the host and key information for your own Meilisearch installation.
-    |
-    | See: https://www.meilisearch.com/docs/learn/configuration/instance_options#all-instance-options
-    |
-    */
+    // /*
+    // |--------------------------------------------------------------------------
+    // | Meilisearch Configuration
+    // |--------------------------------------------------------------------------
+    // |
+    // | Here you may configure your Meilisearch settings. Meilisearch is an open
+    // | source search engine with minimal configuration. Below, you can state
+    // | the host and key information for your own Meilisearch installation.
+    // |
+    // | See: https://www.meilisearch.com/docs/learn/configuration/instance_options#all-instance-options
+    // |
+    // */
+
+    // 'meilisearch' => [
+    //     'host' => env('MEILISEARCH_HOST', 'http://localhost:7700'),
+    //     'key' => env('MEILISEARCH_KEY'),
+    //     'index-settings' => [
+    //         // 'users' => [
+    //         //     'filterableAttributes'=> ['id', 'name', 'email'],
+    //         // ],
+    //     ],
+    // ],
+
+    'driver' => env('SCOUT_DRIVER', 'meilisearch'),
 
     'meilisearch' => [
-        'host' => env('MEILISEARCH_HOST', 'http://localhost:7700'),
-        'key' => env('MEILISEARCH_KEY'),
-        'index-settings' => [
-            // 'users' => [
-            //     'filterableAttributes'=> ['id', 'name', 'email'],
-            // ],
-        ],
+        'host' => env('MEILISEARCH_HOST', 'http://meilisearch:7700'),
+        'key' => env('MEILISEARCH_KEY', 'topsecret1400'),
     ],
-
     /*
     |--------------------------------------------------------------------------
     | Typesense Configuration

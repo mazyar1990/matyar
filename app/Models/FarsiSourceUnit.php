@@ -16,7 +16,14 @@ class FarsiSourceUnit extends Model
      * @var string
      */
     protected $table = 'farsi_source_units';
-
+    
+    protected $fillable = [
+        'source_file',  
+        'text',  
+        'type',
+        'internal_id',
+        'hash',
+    ];
     /**
      * Get the name of the index associated with the model for Scout.
      */
