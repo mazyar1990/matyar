@@ -26,7 +26,6 @@ class SourceFileController extends Controller
             'project_name' => 'required',
             'lang' => 'required|in:ar,fa',
             'subject' => 'required',
-            'corpus' => 'required', 
             'file' => 'required|file|mimes:doc,docx,txt|max:10240', // Adjust validation rules as needed  
             ]);  
         } catch(\Illuminate\Validation\ValidationException $e) {
@@ -41,6 +40,36 @@ class SourceFileController extends Controller
             return response()->json(['error' => $translatedErrors], 422);
         }        
 
+
+        $lang = $request->input('lang');
+        if ($lang == "ar") {
+            $tableName = "arabic_source_units";
+            $targetlang = "fa";
+        } elseif ($lang == "fa") {
+            $tableName = "farsi_source_units";
+            $targetlang = "ar";
+        }
+        
+       // Save the project if new
+        $existingProject = Project::where('name', $request->input('project_name'))
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if (!$existingProject) {
+            $project = Project::create([
+                'name'            => $request->input('project_name'),
+                'subject'         => $request->input('subject'),
+                'description'     => '',
+                'source_language' => $lang,
+                'target_language' => $targetlang,
+                'status'          => 'pending',
+                'user_id'         => auth()->id(),
+            ]);
+        } else {
+            $project = $existingProject;
+        }
+
+        $projectID = $project->id;
 
         //get the uploaded file and convert it into html
         $file = $request->file('file');
@@ -86,9 +115,9 @@ class SourceFileController extends Controller
         $fileType = $file->getClientOriginalExtension(); // Get the file type  
         $userId = auth()->id(); // Get the authenticated user's ID
         // $fileName = $fileName = $request->file('file')->getClientOriginalName();
-        $lang = $request->input('lang');
 
         $sourceFile = SourceFile::create([
+            'project_id' => $projectID,
             'name' => $request->input('file_name'),
             'owner' => $userId,
             'type' => $fileType,
@@ -124,22 +153,7 @@ class SourceFileController extends Controller
             ]);
         }
 
-                //save the project if new
-        $existingProject = Project::where('name', $request->input('project_name'))
-            ->where('user_id', auth()->id())
-            ->first();
-
-        if (!$existingProject) {
-            Project::create([
-                'name' => $request->input('project_name'),
-                'subject' => $request->input('subject'),
-                'description' => '',
-                'source_language' => $lang,
-                'target_language' => $targetlang,
-                'status' => 'pending',
-                'user_id' => auth()->id(),
-            ]);
-        }
+       
 
         return response()->json([
             'fileId' => $fileId,
@@ -153,6 +167,9 @@ class SourceFileController extends Controller
         $lang = $sourceFile->lang;
         $template = $sourceFile->template;
         
+        if ($lang = 'ar') $targetLang = 'fa';
+        if ($lang = 'fa') $targetLang = 'ar';
+
         //remove the html, head and body elements from the templates and storing them in source and target html to be further changed afterwards
         $sourceHtml = $template;
         $targetHtml = $template;
@@ -222,7 +239,7 @@ class SourceFileController extends Controller
             $finalHtml .=  '</div>';
         }
 
-        return view('translate', compact('finalHtml'));
+        return view('translate', compact('finalHtml', 'lang', 'targetLang'));
     }
 
     //extracts the text nodes from an html string

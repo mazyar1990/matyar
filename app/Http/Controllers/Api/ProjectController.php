@@ -62,7 +62,7 @@ class ProjectController extends Controller
             // Get files with only id and name
             $filesForThisProject = DB::table('source_files')
                 ->where('project_id', $project->id)
-                ->select('id', 'name')
+                ->select('id', 'name', 'lang')
                 ->get();
                     
             return response()->json([

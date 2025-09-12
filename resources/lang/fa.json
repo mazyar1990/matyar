@@ -17,8 +17,8 @@
     "Delete account": "حذف حساب",
     "Resend Verification Email": "ارسال مجدد ایمیل فعالسازی",
     "Remember me": "مرا بیاد بیاور",
-    "Click to upload" : "برای بازگذاری سند، کلیک کنید",
-    "or drag and drop" : "یا بکشید و اینجا رها کنید",
+    "Click to upload" : "برای بارگذاری سند، کلیک کنید",
+    "or drag and drop" : "یا فایل را به اینجا بکشید",
     "WORD or TEXT (MAX. 10MB)" : "ورد یا تکست (حداکثر 10 مگابایت)",
     "Please select a file to upload." : "لطفا سندی برای بارگذاری انتخاب کنید",
     "File uploaded successfully!" : "بارگذاری سند موفق بود",
@@ -29,7 +29,7 @@
     "Source Text" : "متن مبدأ",
     "Target Text" : "متن مقصد",
     "File": "فایل",
-    "Download": "دانلود",
+    "Download": "بارگیری متن مقصد",
     "Project Name": "نام پروژه",
     "From Arabic to Persian": "از عربی به فارسی",
     "From Persian to Arabic": "از فارسی به عربی",
@@ -52,5 +52,11 @@
     "File Name": "نام فایل",
     "Resume Translation": "ادامه ترجمه",
     "Please use the Resume Translation button for existing files.": "لطفاً برای فایل‌های موجود از دکمه ادامه ترجمه استفاده کنید.",
-    "Project not found": "پروژه یافت نشد"
+    "Project not found": "پروژه یافت نشد",
+    "Using Machine Translation": "استفاده از ترجمه ماشینی",
+    "Using Translation Memory": "استفاده از حافظه ترجمه",
+    "Enter text...": "واحد مبدأ",
+    "Optional note...": "واحد مقصد",
+    "Submit": "جستجو در پیکره",
+    "The lang field is required.": "فیلد زبان اجباری است"
 }
